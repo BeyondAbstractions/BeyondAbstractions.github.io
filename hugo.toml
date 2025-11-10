@@ -1,4 +1,4 @@
-baseURL = 'https://BeyondAbstractions.github.io/'
+baseURL = 'https://beyondabstractions.github.io/'
 languageCode = 'en-us'
 title = 'Keerthivasan Raghavan'
 theme = 'gokarna'
