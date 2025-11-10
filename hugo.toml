@@ -1,0 +1,55 @@
+baseURL = 'https://BeyondAbstractions.github.io/'
+languageCode = 'en-us'
+title = 'Keerthivasan Raghavan'
+theme = 'gokarna'
+
+[params]
+  dateFormat = "Monday, 02-Jan-06 15:04:05 MST"
+  description = "Looking beyond abstractions!"
+
+[menu]
+  
+  [[menu.main]]
+    identifier = "about"
+    name = "About"
+    page = "about"
+    weight = 1
+    url = "/about/"
+
+  [[menu.main]]
+    identifier = "projects"
+    name = "Projects"
+    weight = 2
+    url = "/projects/"
+
+  [[menu.main]]
+    identifier = "posts"
+    name = "Posts"
+    url = "/posts/"
+    weight = 3
+
+  [[menu.main]]
+    identifier = "tags"
+    name = "Tags"
+    url = "/tags/"
+    weight = 4
+    
+  [[menu.main]]
+    identifier = "github"
+    name = "GitHub"
+    url = "https://github.com/BeyondAbstractions"
+    weight = 5
+    pre = "<span data-feather='github'></span>"
+
+   [[menu.main]]
+    identifier = "leetcode"
+    name = "LeetCode"
+    url = "https://leetcode.com/u/mail2akash97/"
+    weight = 6
+    pre = "<span data-feather='code'></span>"
+
+  [[menu.main]]
+    identifier = "resume"
+    name = "Resume"
+    url = "https://experimentalguy1.hackerresume.io/2885e3ee-ae5a-4a60-b117-816be541a59f"
+    weight = 7

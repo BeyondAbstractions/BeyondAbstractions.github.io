@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Keerthivasan Raghavan</title>
+    <link>https://BeyondAbstractions.github.io/</link>
+    <description>Recent content on Keerthivasan Raghavan</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Mon, 10 Nov 2025 11:39:30 +0000</lastBuildDate>
+    <atom:link href="https://BeyondAbstractions.github.io/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Projects</title>
+      <link>https://BeyondAbstractions.github.io/projects/</link>
+      <pubDate>Mon, 10 Nov 2025 11:39:30 +0000</pubDate>
+      <guid>https://BeyondAbstractions.github.io/projects/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>About</title>
+      <link>https://BeyondAbstractions.github.io/about/</link>
+      <pubDate>Mon, 10 Nov 2025 11:23:07 +0000</pubDate>
+      <guid>https://BeyondAbstractions.github.io/about/</guid>
+      <description></description>
+    </item>
+    <item>
+      <title>Hello World</title>
+      <link>https://BeyondAbstractions.github.io/posts/hello-world/</link>
+      <pubDate>Mon, 10 Nov 2025 11:18:28 +0000</pubDate>
+      <guid>https://BeyondAbstractions.github.io/posts/hello-world/</guid>
+      <description>&lt;h1 id=&#34;hello-world&#34;&gt;Hello World!&lt;/h1&gt;&#xA;&lt;p&gt;This is my blog.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
