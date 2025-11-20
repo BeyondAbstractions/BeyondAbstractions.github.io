@@ -2,8 +2,14 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
+    <loc>https://beyondabstractions.github.io/posts/devops-behind-hosting-an-https-endpoint-in-aws/</loc>
+    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
+  </url><url>
     <loc>https://beyondabstractions.github.io/</loc>
-    <lastmod>2025-11-10T11:39:30+00:00</lastmod>
+    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
+  </url><url>
+    <loc>https://beyondabstractions.github.io/posts/</loc>
+    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://beyondabstractions.github.io/projects/</loc>
     <lastmod>2025-11-10T11:39:30+00:00</lastmod>
@@ -15,9 +21,6 @@
     <lastmod>2025-11-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://beyondabstractions.github.io/tags/hello-world/</loc>
-    <lastmod>2025-11-10T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>https://beyondabstractions.github.io/posts/</loc>
     <lastmod>2025-11-10T00:00:00+00:00</lastmod>
   </url><url>
     <loc>https://beyondabstractions.github.io/tags/</loc>
