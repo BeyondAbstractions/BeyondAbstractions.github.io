@@ -5,8 +5,10 @@ date: 2025-11-20T15:34:55Z
 lastmod: 2025-11-20
 showTableOfContents: false
 # tags: ["",]
-title: "Devops Behind Hosting an Http(s) Endpoint in Aws"
+title: "WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS"
 type: "post"
 ---
 
-# The Devops behind hosting an http/https endpoint in AWS
+# WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS
+
+## The why?
