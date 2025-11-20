@@ -56,6 +56,6 @@ theme = 'gokarna'
   
   [[menu.main]]
     identifier = "src"
-    name = "Resume"
+    name = "Src"
     url = "https://github.com/BeyondAbstractions/BeyondAbstractions.github.io"
     weight = 8
