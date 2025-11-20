@@ -53,3 +53,9 @@ theme = 'gokarna'
     name = "Resume"
     url = "https://experimentalguy1.hackerresume.io/2885e3ee-ae5a-4a60-b117-816be541a59f"
     weight = 7
+  
+  [[menu.main]]
+    identifier = "src"
+    name = "Resume"
+    url = "https://github.com/BeyondAbstractions/BeyondAbstractions.github.io"
+    weight = 8
