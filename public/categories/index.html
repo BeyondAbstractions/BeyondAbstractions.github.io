@@ -53,6 +53,26 @@
 
     
     
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.css" integrity="sha384-Pu5+C18nP5dwykLJOhd2U4Xen7rjScHN/qusop27hdd2drI+lL5KvX7YntvT8yew" crossorigin="anonymous">
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/katex.min.js" integrity="sha384-2B8pfmZZ6JlVoScJm/5hQfNS2TI/6hPqDZInzzPc8oHpN5SgeNOf4LzREO6p5YtZ" crossorigin="anonymous"></script>
+    <script defer src="https://cdn.jsdelivr.net/npm/katex@0.16.27/dist/contrib/auto-render.min.js" integrity="sha384-hCXGrW6PitJEwbkoStFjeJxv+fSOOQKOPbJxSfM6G5sWZjAyWhXiTIIAmQqnlLlh" crossorigin="anonymous"
+        onload="renderMathInElement(document.body);"></script>
+    <script>
+      document.addEventListener("DOMContentLoaded", function() {
+        renderMathInElement(document.body, {
+          // customised options
+          // • auto-render specific keys, e.g.:
+          delimiters: [
+            {left: '$$', right: '$$', display: true},
+            {left: '$', right: '$', display: false},
+          ],
+          // • rendering keys, e.g.:
+          throwOnError : false
+        });
+      });
+    </script>
+  
+    
 </head>
 <body>
         <script>
@@ -171,15 +191,8 @@
     <ul class="post-tags">
         
         <li class="post-tag">
-            <a href="/tags/aws/">
-                <div class="tag-name">aws</div>
-                <div class="tag-posts-count">1</div>
-            </a>
-        </li>
-        
-        <li class="post-tag">
-            <a href="/tags/distributed-systems/">
-                <div class="tag-name">distributed systems</div>
+            <a href="/tags/cheatsheet/">
+                <div class="tag-name">cheatsheet</div>
                 <div class="tag-posts-count">1</div>
             </a>
         </li>
@@ -192,15 +205,8 @@
         </li>
         
         <li class="post-tag">
-            <a href="/tags/solution-architecture/">
-                <div class="tag-name">solution architecture</div>
-                <div class="tag-posts-count">1</div>
-            </a>
-        </li>
-        
-        <li class="post-tag">
-            <a href="/tags/system-design/">
-                <div class="tag-name">system design</div>
+            <a href="/tags/hugo/">
+                <div class="tag-name">hugo</div>
                 <div class="tag-posts-count">1</div>
             </a>
         </li>

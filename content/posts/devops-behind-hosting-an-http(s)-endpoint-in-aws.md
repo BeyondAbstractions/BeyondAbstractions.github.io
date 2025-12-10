@@ -4,9 +4,10 @@ date: 2025-11-20T15:34:55Z
 # image: ""
 lastmod: 2025-11-20
 showTableOfContents: false
-tags: ["AWS", "Solution Architecture", "System Design", "Distributed Systems"]
+tags: ["AWS", "Solution Architecture", "System Design", "Distributed Systems", "DevOps"]
 title: "WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS"
 type: "post"
+draft: true
 ---
 
 # WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS

@@ -6,14 +6,14 @@
     <description>Recent content in Posts on Keerthivasan Raghavan</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Thu, 20 Nov 2025 00:00:00 +0000</lastBuildDate>
+    <lastBuildDate>Wed, 10 Dec 2025 00:00:00 +0000</lastBuildDate>
     <atom:link href="https://beyondabstractions.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
     <item>
-      <title>WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS</title>
-      <link>https://beyondabstractions.github.io/posts/devops-behind-hosting-an-https-endpoint-in-aws/</link>
-      <pubDate>Thu, 20 Nov 2025 15:34:55 +0000</pubDate>
-      <guid>https://beyondabstractions.github.io/posts/devops-behind-hosting-an-https-endpoint-in-aws/</guid>
-      <description>&lt;h1 id=&#34;wip-devops-behind-hosting-an-https-endpoint-in-aws&#34;&gt;WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS&lt;/h1&gt;&#xA;&lt;h2 id=&#34;the-why&#34;&gt;The why?&lt;/h2&gt;</description>
+      <title>Hugo Cheat Sheet</title>
+      <link>https://beyondabstractions.github.io/posts/hugo-cheat-sheet/</link>
+      <pubDate>Wed, 10 Dec 2025 15:28:57 +0000</pubDate>
+      <guid>https://beyondabstractions.github.io/posts/hugo-cheat-sheet/</guid>
+      <description>&lt;h1 id=&#34;hugo-cheat-sheet&#34;&gt;Hugo Cheat Sheet&lt;/h1&gt;&#xA;&lt;table&gt;&#xA;  &lt;thead&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;th&gt;Command&lt;/th&gt;&#xA;          &lt;th&gt;Purpose&lt;/th&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/thead&gt;&#xA;  &lt;tbody&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;code&gt;hugo new posts/&amp;lt;post name&amp;gt;.md&lt;/code&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Create a new post.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;code&gt;hugo serve -D&lt;/code&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Start development server to serve content locally.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;code&gt;hugo build&lt;/code&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Build the site.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/tbody&gt;&#xA;&lt;/table&gt;&#xA;&lt;h1 id=&#34;documentation-links&#34;&gt;Documentation Links&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://gohugo.io/documentation/&#34;&gt;Hugo Documentation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;Hugo Themes&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://gokarna-hugo.netlify.app/posts/&#34;&gt;Gokarna Theme&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
       <title>Hello World</title>

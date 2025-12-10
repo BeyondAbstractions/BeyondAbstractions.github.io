@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
-    <title>AWS on Keerthivasan Raghavan</title>
-    <link>http://localhost:1313/tags/aws/</link>
-    <description>Recent content in AWS on Keerthivasan Raghavan</description>
+    <title>DevOps on Keerthivasan Raghavan</title>
+    <link>http://localhost:1313/tags/devops/</link>
+    <description>Recent content in DevOps on Keerthivasan Raghavan</description>
     <generator>Hugo</generator>
     <language>en-us</language>
     <lastBuildDate>Thu, 20 Nov 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="http://localhost:1313/tags/aws/index.xml" rel="self" type="application/rss+xml" />
+    <atom:link href="http://localhost:1313/tags/devops/index.xml" rel="self" type="application/rss+xml" />
     <item>
       <title>WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS</title>
       <link>http://localhost:1313/posts/devops-behind-hosting-an-https-endpoint-in-aws/</link>
