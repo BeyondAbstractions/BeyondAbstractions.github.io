@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes"?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+  <channel>
+    <title>Validation on Keerthivasan Raghavan</title>
+    <link>http://localhost:1313/tags/validation/</link>
+    <description>Recent content in Validation on Keerthivasan Raghavan</description>
+    <generator>Hugo</generator>
+    <language>en-us</language>
+    <lastBuildDate>Sat, 17 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/tags/validation/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>Minimal Distro</title>
+      <link>http://localhost:1313/posts/minimal-distro/</link>
+      <pubDate>Sat, 17 Oct 2026 05:18:10 +0000</pubDate>
+      <guid>http://localhost:1313/posts/minimal-distro/</guid>
+      <description>&lt;h1 id=&#34;wip-assembling-a-minimal-distro&#34;&gt;WIP: Assembling a Minimal Distro&lt;/h1&gt;&#xA;&lt;h2 id=&#34;the-why&#34;&gt;The Why?&lt;/h2&gt;&#xA;&lt;p&gt;There are many classes of computing devices, ranging from small handheld mobile devices to servers, that are said to run &amp;ldquo;Linux.&amp;rdquo; However, the phrase &amp;ldquo;It runs Linux&amp;rdquo; is often thrown around without clearly defining what it means. Does it mean that the device runs just the Linux kernel, or does it mean something more, such as a Linux distribution (whatever that means)?&lt;/p&gt;&#xA;&lt;p&gt;When you ask developers what operating system they use, they often reply with &amp;ldquo;Ubuntu,&amp;rdquo; &amp;ldquo;Fedora,&amp;rdquo; &amp;ldquo;Windows,&amp;rdquo; etc. Many, if not most, use terms such as &amp;ldquo;Ubuntu&amp;rdquo; and &amp;ldquo;Linux&amp;rdquo; interchangeably. While doing so is convenient in everyday conversation because it abstracts away much of the underlying complexity, from a software perspective, these terms cannot be considered interchangeable. In software literature, they refer to different entities. In fact, one is a composition that includes the other.&lt;/p&gt;</description>
+    </item>
+  </channel>
+</rss>
