@@ -7,7 +7,7 @@ showTableOfContents: false
 tags: ["Silicon Bringup", "Validation", "System Software Integration"]
 title: "WIP: Minimal Distro"
 type: "post"
-draft: false
+draft: true
 ---
 
 # WIP: Assembling a Minimal Distro
