@@ -2,66 +2,48 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
   xmlns:xhtml="http://www.w3.org/1999/xhtml">
   <url>
-    <loc>http://localhost:1313/</loc>
+    <loc>https://beyondabstractions.github.io/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/minimal-distro/</loc>
+    <loc>https://beyondabstractions.github.io/posts/minimal-distro/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/</loc>
+    <loc>https://beyondabstractions.github.io/posts/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/silicon-bringup/</loc>
+    <loc>https://beyondabstractions.github.io/tags/silicon-bringup/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/system-software-integration/</loc>
+    <loc>https://beyondabstractions.github.io/tags/system-software-integration/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/</loc>
+    <loc>https://beyondabstractions.github.io/tags/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/validation/</loc>
+    <loc>https://beyondabstractions.github.io/tags/validation/</loc>
     <lastmod>2026-10-17T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/cheatsheet/</loc>
+    <loc>https://beyondabstractions.github.io/tags/cheatsheet/</loc>
     <lastmod>2025-12-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/hugo/</loc>
+    <loc>https://beyondabstractions.github.io/tags/hugo/</loc>
     <lastmod>2025-12-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/hugo-cheat-sheet/</loc>
+    <loc>https://beyondabstractions.github.io/posts/hugo-cheat-sheet/</loc>
     <lastmod>2025-12-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/aws/</loc>
-    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/devops/</loc>
-    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/distributed-systems/</loc>
-    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/solution-architecture/</loc>
-    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/tags/system-design/</loc>
-    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/posts/devops-behind-hosting-an-https-endpoint-in-aws/</loc>
-    <lastmod>2025-11-20T00:00:00+00:00</lastmod>
-  </url><url>
-    <loc>http://localhost:1313/projects/</loc>
+    <loc>https://beyondabstractions.github.io/projects/</loc>
     <lastmod>2025-11-10T11:39:30+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/about/</loc>
+    <loc>https://beyondabstractions.github.io/about/</loc>
     <lastmod>2025-11-10T11:23:07+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/posts/hello-world/</loc>
+    <loc>https://beyondabstractions.github.io/posts/hello-world/</loc>
     <lastmod>2025-11-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/tags/hello-world/</loc>
+    <loc>https://beyondabstractions.github.io/tags/hello-world/</loc>
     <lastmod>2025-11-10T00:00:00+00:00</lastmod>
   </url><url>
-    <loc>http://localhost:1313/categories/</loc>
+    <loc>https://beyondabstractions.github.io/categories/</loc>
   </url>
 </urlset>
