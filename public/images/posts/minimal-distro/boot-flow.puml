@@ -1,0 +1,26 @@
+@startuml
+start
+:BIOS/UEFI;
+
+->Loads an UEFI application;
+
+:GRUB;
+note right
+interface **UEFI Runtime Services and API**
+end note
+
+->Loads the Linux Kernel and initial ramdisk;
+
+:Init Ram Disk;
+note right
+interface **init**
+end note
+
+->Switch root into root file system;
+
+:Rootfs;
+note right
+interface **init**
+end note
+
+@enduml

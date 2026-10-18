@@ -1,0 +1,31 @@
+@startuml
+
+top to bottom direction
+
+component "BIOS / UEFI" as UEFI
+interface "UEFI Services API" as UEFI_API
+
+component "GRUB" as GRUB
+
+component "Linux Kernel" as KERNEL
+component "Initial RAM Disk" as INITRAMFS
+interface "/init" as INIT
+
+component "Root File System" as ROOTFS
+interface "/init" as ROOT_INIT
+
+
+UEFI -- UEFI_API
+UEFI_API -- GRUB
+
+GRUB --> KERNEL : Loads
+GRUB --> INITRAMFS : Loads
+
+KERNEL --> INITRAMFS : Extract compressed ram disk\nMount decompressed ram disk as initial root
+
+INITRAMFS -- INIT
+INIT --> ROOTFS : modprobe storage drivers\nmount root file system\nswitch_root
+
+ROOTFS -- ROOT_INIT
+
+@enduml
