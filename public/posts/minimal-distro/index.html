@@ -19,19 +19,19 @@
 
     
     <title>WIP: Minimal Distro</title>
-    <meta name="description" content="WIP: Assembling a Minimal Distro The Why? There are many classes of computing devices, ranging from small handheld mobile devices to servers, that are said to …">
+    <meta name="description" content="WIP: Assembling a Minimal Distro Table of Contents The Why? What is a Linux Distribution? Requirements Why Actual Hardware? Understanding the Boot Process Set …">
     <meta name="keywords" content='Silicon Bringup, Validation, System Software Integration'>
 
     <meta property="og:url" content="http://localhost:1313/posts/minimal-distro/">
     <meta property="og:type" content="website">
     <meta property="og:title" content="WIP: Minimal Distro">
-    <meta property="og:description" content="WIP: Assembling a Minimal Distro The Why? There are many classes of computing devices, ranging from small handheld mobile devices to servers, that are said to …">
+    <meta property="og:description" content="WIP: Assembling a Minimal Distro Table of Contents The Why? What is a Linux Distribution? Requirements Why Actual Hardware? Understanding the Boot Process Set …">
     <meta property="og:image" content="http://localhost:1313/">
     <meta property="og:image:secure_url" content="http://localhost:1313/">
 
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:title" content="WIP: Minimal Distro">
-    <meta name="twitter:description" content="WIP: Assembling a Minimal Distro The Why? There are many classes of computing devices, ranging from small handheld mobile devices to servers, that are said to …">
+    <meta name="twitter:description" content="WIP: Assembling a Minimal Distro Table of Contents The Why? What is a Linux Distribution? Requirements Why Actual Hardware? Understanding the Boot Process Set …">
     <meta property="twitter:domain" content="http://localhost:1313/posts/minimal-distro/">
     <meta property="twitter:url" content="http://localhost:1313/posts/minimal-distro/">
     <meta name="twitter:image" content="http://localhost:1313/">
@@ -234,6 +234,25 @@
 
     <div class="post-content">
         <h1 id="wip-assembling-a-minimal-distro">WIP: Assembling a Minimal Distro</h1>
+<h2 id="table-of-contents">Table of Contents</h2>
+<ul>
+<li><a href="#the-why">The Why?</a></li>
+<li><a href="#what-is-a-linux-distribution">What is a Linux Distribution?</a></li>
+<li><a href="#requirements">Requirements</a></li>
+<li><a href="#why-actual-hardware">Why Actual Hardware?</a></li>
+<li><a href="#understanding-the-boot-process">Understanding the Boot Process</a></li>
+<li><a href="#set-up-the-workspace">Set Up the Workspace</a></li>
+<li><a href="#configuring-and-building-the-linux-kernel">Configuring and Building the Linux Kernel</a></li>
+<li><a href="#creating-the-composition-of-the-initramfs">Creating the Composition of the initramfs</a></li>
+<li><a href="#creating-the-composition-of-the-rootfs">Creating the Composition of the rootfs</a></li>
+<li><a href="#storage-layout-on-the-usb-drive">Storage Layout on the USB Drive</a></li>
+<li><a href="#installing-grub">Installing GRUB</a></li>
+<li><a href="#flashing-the-software-image">Flashing the Software Image</a></li>
+<li><a href="#booting-the-hardware-with-the-new-distro">Booting the Hardware with the New &ldquo;Distro&rdquo;</a></li>
+<li><a href="#transitioning-from-initramfs-to-rootfs">Transitioning from initramfs to rootfs</a></li>
+<li><a href="#bring-up-complete">Bring-Up Complete</a></li>
+<li><a href="#what-next">What Next?</a></li>
+</ul>
 <h2 id="the-why">The Why?</h2>
 <p>There are many classes of computing devices, ranging from small handheld mobile devices to servers, that are said to run &ldquo;Linux.&rdquo; However, the phrase &ldquo;It runs Linux&rdquo; is often used without clearly defining what it means. Does it mean that the device runs just the Linux kernel, or does it mean something more, such as a Linux distribution (whatever that means)?</p>
 <p>When you ask developers what operating system they use, they often reply with &ldquo;Ubuntu,&rdquo; &ldquo;Fedora,&rdquo; &ldquo;Windows,&rdquo; etc. Many, if not most, use terms such as &ldquo;Ubuntu&rdquo; and &ldquo;Linux&rdquo; interchangeably. While doing so is convenient in everyday conversation because it abstracts away much of the underlying complexity, from a software perspective, these terms cannot be considered interchangeable. In software literature, they refer to different entities. In fact, one is a composition that includes the other.</p>
@@ -264,7 +283,7 @@ language expected by the interface it can replace the existing one.</p>
 <h2 id="why-actual-hardware">Why Actual Hardware?</h2>
 <p>With alternatives like QEMU, it is easy to test an operating system in a virtualized environment. The problem, however, is that you do not get to see many of the aspects that force you to think about how the current composition and configuration will actually run on real hardware.</p>
 <p>Those nuances are often left out, reducing the exercise to a toy project at best. Doing
-it on real harsware makes things real/authentic as it can get.</p>
+it on real hardware makes things real/authentic as it can get.</p>
 <h2 id="understanding-the-boot-process">Understanding the Boot Process</h2>
 <p><img src="/images/posts/minimal-distro/boot-flow-component.png" alt="Linux boot flow"></p>
 <p>When you turn on your computer, a couple of complex processes run before
@@ -354,6 +373,86 @@ might panic or crash midway through the initialization of the RAM disk.
 Hardware might not be discovered, the root file system might fail to mount,
 or <code>init</code> itself might fail, or boot times might increase significantly.
 The list of things that can go wrong is practically endless.</p>
+<table>
+  <thead>
+      <tr>
+          <th style="text-align: left">Component</th>
+          <th style="text-align: center">Interface Consumed</th>
+          <th style="text-align: center">Interface Provided</th>
+          <th style="text-align: left">Nature/Shape of the Interface</th>
+          <th style="text-align: left">Purpose of the Interface</th>
+          <th style="text-align: left">Current Implementation</th>
+          <th style="text-align: left">Alternate Implementation</th>
+      </tr>
+  </thead>
+  <tbody>
+      <tr>
+          <td style="text-align: left">BIOS/UEFI</td>
+          <td style="text-align: center">Power-on / Reset</td>
+          <td style="text-align: center">UEFI Services API</td>
+          <td style="text-align: left">A C-style firmware API that provides UEFI applications with services for accessing platform resources and peripherals. During early boot, these services allow a bootloader to discover and access storage devices containing the Linux kernel and initial RAM disk.</td>
+          <td style="text-align: left">Provides a standardized environment in which firmware and boot applications can discover hardware and load the next stage of the boot process.</td>
+          <td style="text-align: left">UEFI firmware supplied by the PC/laptop manufacturer</td>
+          <td style="text-align: left">coreboot + UEFI payload such as EDK II/TianoCore</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">GRUB</td>
+          <td style="text-align: center">UEFI Services API</td>
+          <td style="text-align: center">GRUB shell, configuration, and Linux boot protocol</td>
+          <td style="text-align: left">The GRUB shell and configuration provide human- and configuration-facing interfaces for controlling the boot process, including kernel command-line parameters and the locations of the kernel and initial RAM disk. A binary boot protocol defines the contract used to hand control to the Linux kernel.</td>
+          <td style="text-align: left">Locates and loads the Linux kernel and initial RAM disk into memory, supplies the kernel command line and other boot information, and transfers execution to the kernel.</td>
+          <td style="text-align: left">GRUB 2</td>
+          <td style="text-align: left">systemd-boot, U-Boot, or a custom UEFI boot application</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Linux Kernel</td>
+          <td style="text-align: center">Linux boot protocol</td>
+          <td style="text-align: center">System calls, virtual filesystems, sockets, device nodes, Netlink, etc.</td>
+          <td style="text-align: left">The kernel exposes several interfaces to userspace. System calls form the fundamental programmatic interface. Higher-level C library functions commonly wrap these system calls. Other kernel interfaces appear as files, device nodes, sockets, and message-based protocols.</td>
+          <td style="text-align: left">Provides controlled access to kernel-managed resources such as processes, memory, filesystems, devices, networking, scheduling, and IPC.</td>
+          <td style="text-align: left">Linux kernel</td>
+          <td style="text-align: left">A custom kernel implementing the required boot protocol and userspace interfaces, or another compatible OS kernel</td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Initial RAM Disk</td>
+          <td style="text-align: center">Linux kernel userspace interfaces</td>
+          <td style="text-align: center">Initial userspace environment and <code>/init</code></td>
+          <td style="text-align: left">A small temporary root filesystem loaded into memory. The kernel mounts it as the initial root filesystem and executes <code>/init</code>. <code>/init</code> can ultimately be a shell script or an executable implemented using C, C++, Rust, systemd, BusyBox, or another suitable runtime.</td>
+          <td style="text-align: left">Performs the userspace work required before the real root filesystem can be used, such as loading required kernel modules, discovering storage, assembling storage stacks, checking or repairing filesystems when appropriate, mounting the real root filesystem, and performing <code>switch_root</code>.</td>
+          <td style="text-align: left">debootstrap-generated Ubuntu userspace with a custom <code>/init</code> shell script</td>
+          <td style="text-align: left">BusyBox-based initramfs, systemd-based initramfs, dracut, or a custom statically linked <code>/init</code></td>
+      </tr>
+      <tr>
+          <td style="text-align: left">Root File System</td>
+          <td style="text-align: center">Linux kernel filesystem/syscall interfaces</td>
+          <td style="text-align: center">Userspace runtime environment</td>
+          <td style="text-align: left">A persistent filesystem hierarchy containing executables, shared libraries, configuration, device-management infrastructure, system services, applications, and other userspace components. After the root transition, the kernel executes the real system&rsquo;s init process from this filesystem.</td>
+          <td style="text-align: left">Provides the persistent userspace environment from which the system is initialized and brought to its normal operational state.</td>
+          <td style="text-align: left">debootstrap-generated minimal Ubuntu rootfs on ext4</td>
+          <td style="text-align: left">Debian, Alpine, Buildroot, Yocto-generated rootfs, or a completely custom userspace</td>
+      </tr>
+  </tbody>
+</table>
+<p>From the table above, it is clear that many components of the system can be replaced as long as
+the replacement continues to satisfy the interfaces expected by the components on either side.</p>
+<p>For example, you could replace the Linux kernel with your own kernel, provided that it understands
+the boot protocol used by the bootloader on that platform and provides the interfaces required by
+the userspace software you intend to run.</p>
+<p>If you do not require compatibility with Linux userspace at all, you could go even further and
+replace the Linux kernel and its userspace environment entirely with an RTOS or your own operating
+system, provided that it can be loaded and entered through the platform&rsquo;s boot mechanism.</p>
+<p>Similarly, the init process in both the initial RAM disk and the root filesystem can be replaced
+with much simpler alternatives to systemd. The initramfs <code>/init</code>, for example, could be a shell
+script, a BusyBox-based init, or a custom executable, provided that it performs the initialization
+required to reach and transition to the real root filesystem.</p>
+<p>Likewise, the init process of the real root filesystem does not have to be systemd. It can be any
+suitable executable capable of initializing and managing the userspace environment required by
+that particular system.</p>
+<p>From the above, it is clear that understanding the interfaces between system components, combined
+with a moderate deep dive into a reference implementation of those interfaces, provides a good
+understanding of the behaviour expected at each boundary. It also reveals how implementation
+details are abstracted away, allowing components on either side of the interface to evolve or be
+replaced independently.</p>
 <h2 id="set-up-the-workspace">Set Up the Workspace</h2>
 <p>Create a workspace directory and switch into it:</p>
 <div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir ~/workspace
@@ -374,13 +473,363 @@ the number of unknown variables while we build our system. Starting from a
 kernel source and configuration close to the one already running on the
 machine allows us to change one thing at a time.</p>
 <h2 id="creating-the-composition-of-the-initramfs">Creating the Composition of the initramfs</h2>
-<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>mkdir initramfs
-</span></span></code></pre></div><h2 id="creating-the-composition-of-the-rootfs">Creating the Composition of the rootfs</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd ~/workspace
+</span></span><span style="display:flex;"><span>mkdir initramfs
+</span></span><span style="display:flex;"><span>sudo debootstrap --arch<span style="color:#f92672">=</span>amd64 --variant<span style="color:#f92672">=</span>minbase noble initramfs http://archive.ubuntu.com/ubuntu
+</span></span></code></pre></div><p>The above command creates the initial composition of the filesystem that will later become our
+initial RAM disk. <code>debootstrap</code> constructs this filesystem using software artifacts obtained from
+the Ubuntu software repository. These artifacts are distributed in a consumable format called
+Debian packages (<code>.deb</code>).</p>
+<p>The resulting <code>initramfs/</code> directory therefore represents our initial selection of userspace
+components. We can add, remove, or configure packages before eventually packaging this filesystem
+into an initramfs image that can be loaded by the bootloader.</p>
+<p>A key idea to understand before going further is the concept of <strong>reproduction</strong>.</p>
+<p>Humans create other humans, computers are used to build other computers, and software is used to
+build other software. Operating systems are no different. An existing Linux system can provide
+the tools and environment required to construct another Linux system.</p>
+<p>This is the fundamental idea behind <code>debootstrap</code>. Starting from an already functioning system,
+we retrieve a minimal set of Ubuntu packages and use them to construct a new Ubuntu filesystem
+hierarchy. The resulting system does not need to contain the same software as the host. It can
+instead be a much smaller and highly customized composition containing only the components
+required for its intended purpose.</p>
+<p>In other words, an existing distribution provides the environment from which we can bootstrap a
+new and customized instance of a distribution.</p>
+<p>Now that we have a base filesystem, how do we go about customizing our newborn distribution?
+ 
+Recollect that we are building this distribution for the same hardware architecture as the
+distribution we are currently running. This gives us an interesting opportunity: we can actually
+run programs from the new filesystem while continuing to use our existing system.
+ 
+Every process has a view of what it considers to be its root directory (<code>/</code>). You can see the root
+directory of your current shell through <code>/proc</code>:
+ </p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>ls -l /proc/self/root
+</span></span></code></pre></div><p> 
+Interesting. Does this mean that a process can have a different root directory from the rest of the
+running system?
+ 
+Yes!
+ 
+Enter <code>chroot</code>.
+ 
+<code>chroot</code> allows us to run a program with a different directory treated as its root directory (<code>/</code>),
+without changing the root filesystem used by the rest of the running system.
+ 
+For example, if our newly created filesystem is located at:
+ </p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>~/workspace/initramfs/
+</span></span></code></pre></div><p> 
+we can enter it with:
+ </p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo chroot ~/workspace/initramfs /bin/bash
+</span></span></code></pre></div><p> 
+From the perspective of the newly started shell, <code>~/workspace/initramfs</code> is now <code>/</code>.
+ 
+Therefore, something that appears as:
+ </p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>~/workspace/initramfs/etc
+</span></span></code></pre></div><p> 
+from the host system appears as:
+ </p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-text" data-lang="text"><span style="display:flex;"><span>/etc
+</span></span></code></pre></div><p> 
+from inside the <code>chroot</code>.
+ 
+We can now run tools from within this new filesystem and begin configuring it almost as though it
+were a running system of its own.
+ 
+An important distinction is that <code>chroot</code> only changes the process&rsquo;s view of the filesystem root.
+It does not give the process a different kernel. Programs running inside the <code>chroot</code> are still
+ordinary processes running on the host Linux kernel.
+ 
+This shared-kernel property is exactly what makes <code>chroot</code> useful here. We can execute the programs
+installed in our newly bootstrapped filesystem and configure the distribution before it has ever
+booted on its own.</p>
+<p><code>chroot</code> exists both as a userspace program and as a system call. Looking through the man pages,
+you will realize that the underlying mechanism is surprisingly simple. The <code>chroot</code> system call
+changes the root directory associated with a process. Consequently, when a program inside the
+<code>chroot</code> accesses an absolute path such as <code>/etc/passwd</code>, the kernel begins pathname resolution
+from the process&rsquo;s new root directory rather than from the root of the original filesystem
+hierarchy. For example, if the process was chrooted to <code>/home/user/initramfs</code>, <code>/etc/passwd</code> would
+resolve to <code>/home/user/initramfs/etc/passwd</code> when viewed from the host. Conceptually, this may look
+like the kernel is simply prepending the new root to every absolute path, but the actual mechanism
+is that the process&rsquo;s starting point for absolute pathname resolution has been changed.</p>
+<p>Again, because every process has the concept of a root directory (<code>/</code>) as part of its filesystem
+view, that root can be changed on a per-process basis. This is the fundamental idea that makes
+<code>chroot</code> possible: instead of changing the root filesystem of the entire running system, we can
+change the root directory from which pathname resolution begins for a particular process and its
+descendants.</p>
+<p>Now, before we enter the <code>initramfs</code> using <code>chroot</code>, what program are we actually going to run
+inside it? A shell, specifically an instance of Bash!</p>
+<p>When we execute <code>chroot</code> and ask it to start <code>/bin/bash</code>, the <code>/bin/bash</code> binary is resolved relative
+to the new root filesystem. Therefore, the Bash executable being started is the one contained
+within our newly created filesystem, not the <code>/bin/bash</code> binary from the host root filesystem.</p>
+<p>On a normally running root filesystem, the <code>mount</code> command will show several filesystems mounted
+at different mount points. Some of these provide important kernel interfaces that userspace
+programs expect to access. The most notable are <code>devtmpfs</code> at <code>/dev</code>, <code>sysfs</code> at <code>/sys</code>, and
+<code>procfs</code> at <code>/proc</code>.</p>
+<p>Recollect that <code>chroot</code> changes the root directory from which a process resolves absolute paths.
+Consequently, a process started inside our new root will see the <code>/dev</code>, <code>/sys</code>, and <code>/proc</code>
+directories belonging to the new filesystem hierarchy, but these directories do not automatically
+contain the filesystems mounted at those locations on the host.</p>
+<p>Linux allows an existing mount to be made visible at another location in the filesystem hierarchy
+using a bind mount. We can therefore make the host&rsquo;s <code>/dev</code>, <code>/sys</code>, and <code>/proc</code> hierarchies
+available at the corresponding locations inside our new root. Before starting Bash inside the
+<code>chroot</code>, we bind mount these important kernel-facing filesystems into it. This gives programs
+running inside the <code>chroot</code> access to devices through <code>/dev</code>, kernel and device information through
+<code>/sys</code>, and process and kernel information through <code>/proc</code>.</p>
+<p>And once we are done customizing the new root filesystem, we simply unmount the bind mounts that
+we created. This removes the views of the host&rsquo;s <code>/dev</code>, <code>/sys</code>, and <code>/proc</code> filesystems from the
+new root filesystem, returning it to a self-contained filesystem hierarchy ready for the next
+stage of our build process.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Make important kernel interfaces available inside the new root</span>
+</span></span><span style="display:flex;"><span>sudo mount --bind /dev  initramfs/dev
+</span></span><span style="display:flex;"><span>sudo mount --bind /sys  initramfs/sys
+</span></span><span style="display:flex;"><span>sudo mount --bind /proc initramfs/proc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Enter the new root filesystem</span>
+</span></span><span style="display:flex;"><span>sudo chroot initramfs /bin/bash
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install userspace utilities for managing kernel modules</span>
+</span></span><span style="display:flex;"><span>apt install kmod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># List the baseline set of installed packages</span>
+</span></span><span style="display:flex;"><span>dpkg -l
+</span></span></code></pre></div><p>Installing packages into the <code>initramfs</code> generally requires entering the <code>chroot</code> environment so
+that the package-management tools operate relative to the new root filesystem. Editing the contents
+of the <code>initramfs</code>, however, only requires sufficient permissions, typically root permissions.</p>
+<p>This means that tools already available on the host distribution can be used to create, modify,
+copy, or remove files within the <code>initramfs</code> without installing those tools into the <code>initramfs</code>
+itself. This is particularly useful when building a minimal system, as build-time tools do not
+need to become part of the final filesystem, thereby conserving disk space and keeping the
+resulting system small.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Within the host shell, outside the initramfs chroot</span>
+</span></span><span style="display:flex;"><span>cd ~/workspace
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo su
+</span></span><span style="display:flex;"><span>cd initramfs
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat &gt; init <span style="color:#e6db74">&lt;&lt;&#39;__EOF__&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">export PS1=&#39;\u@initramfs-\h:\w\$ &#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cd /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">./setup.sh
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">exec /bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">__EOF__</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod +x init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cat &gt; setup.sh <span style="color:#e6db74">&lt;&lt;&#39;__EOF__&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># Create mount points for kernel-provided filesystems
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mkdir -p /proc /sys /dev /tmp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># Mount the major kernel interfaces
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t proc proc /proc
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t sysfs sysfs /sys
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t devtmpfs devtmpfs /dev
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t tmpfs tmpfs /tmp
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># Create and mount the pseudo-terminal filesystem
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mkdir -p /dev/pts
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t devpts devpts /dev/pts
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># Create and mount the POSIX message queue filesystem
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mkdir -p /dev/mqueue
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t mqueue mqueue /dev/mqueue
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># Create shared-memory storage
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mkdir -p /dev/shm
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">mount -t tmpfs tmpfs /dev/shm
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">__EOF__</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod +x setup.sh
+</span></span></code></pre></div><p>You have now created your own <code>init</code> process. It sets up the minimal userspace environment required
+for the initial RAM disk and then launches a shell.</p>
+<p>The <code>exec /bin/sh</code> directive is particularly important. It does not create another process.
+Instead, <code>exec</code> replaces the program currently running as the <code>init</code> process with <code>/bin/sh</code> while
+retaining the same process ID. Since <code>/init</code> was started by the kernel as PID 1, the resulting
+shell continues running as PID 1.</p>
+<p>In other words, the shell script initially acts as <code>init</code>, performs the required setup, and then
+transforms itself into the interactive shell through <code>exec</code>.</p>
+<p>Now we install the kernel modules and the vDSO into the initial RAM filesystem from the host
+machine. Please refer to the section
+<a href="#configuring-and-building-the-linux-kernel">Configuring and Building the Linux Kernel</a>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span><span style="color:#75715e"># Within the host shell, outside the initramfs chroot</span>
+</span></span><span style="display:flex;"><span>cd ~/workspace/kernel-src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo su
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export KBUILD_OUTPUT<span style="color:#f92672">=</span>TODO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install kernel modules into the initramfs</span>
+</span></span><span style="display:flex;"><span>make INSTALL_MOD_STRIP<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     INSTALL_MOD_PATH<span style="color:#f92672">=</span>/.../initramfs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     modules_install
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install the vDSO into the initramfs</span>
+</span></span><span style="display:flex;"><span>make INSTALL_MOD_STRIP<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     INSTALL_MOD_PATH<span style="color:#f92672">=</span>/.../initramfs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     vdso_install
+</span></span></code></pre></div><p><code>INSTALL_MOD_PATH</code> specifies the filesystem into which the kernel modules are staged. Instead of
+installing the modules into the host root filesystem, <code>modules_install</code> installs them under the
+corresponding <code>/lib/modules/&lt;kernel-version&gt;/</code> hierarchy within our <code>initramfs</code>.</p>
+<p><code>INSTALL_MOD_STRIP=1</code> strips debugging information from the installed kernel modules, helping
+reduce the size of the resulting initial RAM disk.</p>
+<p>Similarly, <code>vdso_install</code> installs the kernel-provided vDSO artifacts into the new filesystem
+rather than into the host filesystem.</p>
+<p>The initial RAM disk is a <code>cpio</code> archive. We need to take the directory tree under <code>~/workspace/initramfs</code> and convert it into a <code>cpio</code> archive.</p>
+<p>Before creating the archive, we need to unmount <code>/dev</code>, <code>/sys</code>, and <code>/proc</code> from the initramfs directory tree. We do not want the host&rsquo;s <code>/dev</code>, <code>/sys</code>, and <code>/proc</code> to become part of the archive. These mount points will later be populated with the appropriate filesystems by <code>setup.sh</code>, which is run by <code>init</code> from within the initial RAM disk.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo umount ~/workspace/initramfs/dev
+</span></span><span style="display:flex;"><span>sudo umount ~/workspace/initramfs/sys
+</span></span><span style="display:flex;"><span>sudo umount ~/workspace/initramfs/proc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># The ramdisk is located at ~/workspace/initramfs.cpio.gz</span>
+</span></span><span style="display:flex;"><span>cd ~/workspace/initramfs
+</span></span><span style="display:flex;"><span>sudo su
+</span></span><span style="display:flex;"><span>find . -print0 | cpio --null -ov --format<span style="color:#f92672">=</span>newc | gzip -9 &gt; ../initramfs.cpio.gz
+</span></span></code></pre></div><p>The disadvantage of <code>debootstrap</code>, compared with more complete build systems(buildroot, yocto, soong),
+is that it does not build the userspace components from source. Instead, it assembles the new filesystem from
+pre-built Debian packages (<code>.deb</code>) obtained from a package repository. As a result, you have
+considerably less opportunity for build-time customization of the individual userspace components,
+such as changing compile-time options, applying source patches, or enabling and disabling features.</p>
+<p>Another consideration is the target architecture. The simplest <code>debootstrap</code> workflow assumes that
+the binaries placed in the new filesystem can be executed by the host while constructing and
+customizing it. Therefore, building for the same architecture as the host is straightforward.
+Cross-architecture bootstrapping is possible, but requires additional mechanisms, such as
+cross-architecture emulation, if binaries from the target filesystem need to be executed on the
+host which is mostly the case other than toy distros like the one here.</p>
+<h2 id="creating-the-composition-of-the-rootfs">Creating the Composition of the rootfs</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>cd ~/workspace
+</span></span><span style="display:flex;"><span>mkdir rootfs
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create a minimal Ubuntu root filesystem</span>
+</span></span><span style="display:flex;"><span>sudo debootstrap --arch<span style="color:#f92672">=</span>amd64 --variant<span style="color:#f92672">=</span>minbase <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    noble rootfs http://archive.ubuntu.com/ubuntu
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Make important kernel interfaces available inside the new root</span>
+</span></span><span style="display:flex;"><span>sudo mount --bind /dev  rootfs/dev
+</span></span><span style="display:flex;"><span>sudo mount --bind /sys  rootfs/sys
+</span></span><span style="display:flex;"><span>sudo mount --bind /proc rootfs/proc
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Enter the new root filesystem</span>
+</span></span><span style="display:flex;"><span>sudo chroot rootfs /bin/bash
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install userspace utilities for managing kernel modules</span>
+</span></span><span style="display:flex;"><span>apt install kmod
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Exit the chroot and return to the host</span>
+</span></span><span style="display:flex;"><span>exit
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># From the host shell, outside the rootfs chroot</span>
+</span></span><span style="display:flex;"><span>cd ~/workspace
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo su
+</span></span><span style="display:flex;"><span>cd rootfs
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Copy the initial RAM disk created earlier into /boot</span>
+</span></span><span style="display:flex;"><span>mkdir -p boot
+</span></span><span style="display:flex;"><span>cp ../initramfs.cpio.gz boot/
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create the init process for the rootfs</span>
+</span></span><span style="display:flex;"><span>cat &gt; init <span style="color:#e6db74">&lt;&lt;&#39;__EOF__&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">export PS1=&#39;\u@rootfs-\h:\w\$ &#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">cd /
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">./setup.sh
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">exec /bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">__EOF__</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod +x init
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create the rootfs setup script</span>
+</span></span><span style="display:flex;"><span>cat &gt; setup.sh <span style="color:#e6db74">&lt;&lt;&#39;__EOF__&#39;
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">#!/bin/bash
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74"># TODO: Add the required mount operations here.
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">
+</span></span></span><span style="display:flex;"><span><span style="color:#e6db74">__EOF__</span>
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>chmod +x setup.sh
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Move from ~/workspace/rootfs to ~/workspace/kernel-src</span>
+</span></span><span style="display:flex;"><span>cd ../kernel-src
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>export KBUILD_OUTPUT<span style="color:#f92672">=</span>TODO
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install the kernel modules into the rootfs</span>
+</span></span><span style="display:flex;"><span>make INSTALL_MOD_STRIP<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     INSTALL_MOD_PATH<span style="color:#f92672">=</span>/absolute/path/to/workspace/rootfs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     modules_install
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install the vDSO into the rootfs</span>
+</span></span><span style="display:flex;"><span>make INSTALL_MOD_STRIP<span style="color:#f92672">=</span><span style="color:#ae81ff">1</span> <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     INSTALL_MOD_PATH<span style="color:#f92672">=</span>/absolute/path/to/workspace/rootfs <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     vdso_install
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Install the kernel image into rootfs/boot</span>
+</span></span><span style="display:flex;"><span>make INSTALL_PATH<span style="color:#f92672">=</span>/absolute/path/to/workspace/rootfs/boot <span style="color:#ae81ff">\
+</span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>     install
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>cd ~/workspace
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create a 4 GiB image file</span>
+</span></span><span style="display:flex;"><span>truncate -s 4G rootfs.ext4
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span><span style="color:#75715e"># Create an ext4 filesystem and populate it with the contents of rootfs/</span>
+</span></span><span style="display:flex;"><span>sudo mkfs.ext4 -F -d rootfs rootfs.ext4
+</span></span></code></pre></div><p>The rootfs is similar in composition to the initial RAM disk. However, observe that the rootfs itself contains the compressed initial RAM disk image. This raises an interesting question: how can the initial RAM disk be accessed if it resides inside the rootfs, when the drivers required to access the USB storage containing the rootfs are themselves inside the initial RAM disk?</p>
+<p>In other words, you need the storage drivers (<code>*.ko</code> kernel modules loaded using <code>modprobe</code>) from the initial RAM disk to access the rootfs, but the initial RAM disk image is stored inside the rootfs. You seemingly need the rootfs to access the initial RAM disk, while simultaneously needing the initial RAM disk to access the rootfs. A classic chicken-and-egg problem?</p>
+<p>Not really. It turns out that GRUB is quite powerful. GRUB has its own filesystem support and can understand the <code>ext4</code> filesystem independently of the Linux kernel. Using its configuration, GRUB locates the initial RAM disk image within the filesystem, reads it from the USB storage, and loads it into memory.</p>
+<p>GRUB then loads the Linux kernel and provides the information necessary for the kernel to locate the initial RAM disk in memory as part of the bootloader-to-kernel boot protocol. The kernel can therefore access the initial RAM disk before it has mounted or accessed the rootfs itself.</p>
+<p>The bootstrapping sequence therefore looks like this:</p>
+<p><code>GRUB → reads ext4 → loads kernel + initramfs into memory → kernel starts → initramfs provides storage drivers → kernel gains access to USB storage → rootfs becomes accessible</code></p>
+<p>This again demonstrates how a well-defined interface allows multiple components to work with the same underlying implementation. The <code>ext4</code> filesystem can be accessed by both the Linux kernel and GRUB because <code>ext4</code> has a well-defined on-disk format. This format specifies how filesystem structures and data are organized within a linear sequence of bytes on a storage device.</p>
+<p>As long as a component understands this format, it can interpret the bytes and navigate the filesystem. The Linux kernel provides one implementation of this logic, while GRUB provides another. Both implementations operate on the same <code>ext4</code> filesystem because they understand the same on-disk representation.</p>
+<p>How, then, is it possible for UEFI/BIOS to access the USB storage medium, parse the bytes stored on it, and discover that a UEFI application exists there?</p>
+<p>It turns out that the firmware has built-in support for accessing certain storage devices, including USB mass-storage devices. Without such support, the firmware would not be able to boot from USB storage in the first place.</p>
+<p>In the case of UEFI, this storage access is exposed to UEFI applications through UEFI services and protocols. GRUB, while running as a UEFI application, can use these firmware-provided interfaces to access the USB storage device. UEFI also understands the filesystem used by the EFI System Partition, typically FAT, allowing it to locate and load the GRUB UEFI executable.</p>
+<p>Once GRUB starts executing, it can use UEFI-provided services for low-level access to the storage device while using its own filesystem implementations, such as its <code>ext4</code> module, to interpret the filesystem containing the kernel and initial RAM disk. GRUB can then locate the kernel and initial RAM disk, read their bytes from storage, load them into memory, and finally hand control over to the Linux kernel.</p>
+<p>This gives us another example of interfaces being layered on top of one another:</p>
+<p><code>USB storage hardware → firmware USB/storage support → UEFI protocols → GRUB → GRUB filesystem implementation → kernel + initramfs</code></p>
+<p>Also notice that you are converting the directory structure of the rootfs into an arrangement of bytes within a file called <code>rootfs.img</code>, essentially serializing the filesystem.</p>
+<p>Again, this is possible because the userspace tool performing this operation implements the <code>ext4</code> on-disk format. It understands how directories, files, permissions, ownership, and other filesystem metadata must be represented as <code>ext4</code> filesystem structures within a linear sequence of bytes.</p>
+<p>The resulting <code>rootfs.img</code> is therefore no longer merely a representation of a directory tree. It is an actual <code>ext4</code> filesystem encoded within a regular file, which can later be written directly into a partition on the USB storage.</p>
+<p>Is it necessary to store the initial RAM disk within the rootfs? No.</p>
+<p>Many desktop distributions store the kernel and initial RAM disk alongside other boot-related files in <code>/boot</code>. This makes it convenient for utilities provided by the distribution to generate or update the initial RAM disk whenever the kernel, kernel modules, or other boot-critical components change.</p>
+<p>In production embedded systems, however, the kernel and initial RAM disk are often treated as boot artifacts and may be placed in dedicated boot partitions or packaged into bootable images, depending on the platform. Separating these artifacts from the rootfs allows the early-boot environment and the rootfs to be managed and updated independently. This is particularly useful when implementing robust OTA update and recovery strategies.</p>
+<p>For example, if an OTA update to the rootfs fails, a known-good early-boot environment can still be available. The system can boot into this environment, provide access to a recovery shell or recovery application, and allow the rootfs to be inspected, repaired, rolled back, or otherwise recovered. It also provides an environment from which failures occurring during the next stage of boot can be triaged and debugged.</p>
+<p>Do desktop systems not face the same problem? They do. The difference is primarily in how the system is designed and updated. On a typical desktop distribution, the kernel, initial RAM disk, bootloader configuration, and rootfs are usually managed together by the distribution&rsquo;s package-management and boot infrastructure. Embedded systems, particularly those designed for reliable OTA updates, are more likely to explicitly separate these components and introduce mechanisms such as redundant boot slots or dedicated recovery environments.</p>
 <h2 id="storage-layout-on-the-usb-drive">Storage Layout on the USB Drive</h2>
+<p>Now that we have the contents of the rootfs, it is time to look at how to structure the USB storage.</p>
+<p>If you imagine USB storage as a linear array of persistent bytes that you can read from and write to, it is simply too large to manage in its raw form. You need a way to compartmentalize it. Each such compartment is called a partition, and it represents a range of bytes whose contents can be organized according to the structure and policies of a particular file system.</p>
+<p>We need to create two such partitions: an EFI System Partition (ESP) and a rootfs partition. The ESP is FAT32 based and rootfs
+is ext4 based.</p>
 <h2 id="installing-grub">Installing GRUB</h2>
-<h2 id="flashing-the-software-image">Flashing the Software Image</h2>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>sudo grub-install --target<span style="color:#f92672">=</span>x86_64-efi --efi-directory<span style="color:#f92672">=</span>... --boot-directory<span style="color:#f92672">=</span>... --removable --no-nvram --recheck
+</span></span></code></pre></div><h2 id="flashing-the-software-image">Flashing the Software Image</h2>
+<p>Now that we have organized the storage on the USB drive, we need to transfer the contents of <code>rootfs.img</code> into the second partition of the USB drive.</p>
+<p>On my machine, this partition is <code>/dev/sdb2</code>. Discover the corresponding partition on your machine by exploring <code>/dev</code> or, preferably, using <code>lsblk</code>.</p>
+<div class="highlight"><pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code class="language-bash" data-lang="bash"><span style="display:flex;"><span>lsblk
+</span></span><span style="display:flex;"><span>
+</span></span><span style="display:flex;"><span>sudo dd <span style="color:#66d9ef">if</span><span style="color:#f92672">=</span>rootfs.img of<span style="color:#f92672">=</span>/dev/sdb2 status<span style="color:#f92672">=</span>progress conv<span style="color:#f92672">=</span>fsync
+</span></span></code></pre></div><p>Be extremely careful when selecting the output device (<code>of</code>). Writing to the wrong partition with <code>dd</code> will overwrite its contents.</p>
 <h2 id="booting-the-hardware-with-the-new-distro">Booting the Hardware with the New &ldquo;Distro&rdquo;</h2>
+<p>Insert the USB drive into your computer and press the appropriate hotkey during startup to enter the UEFI/BIOS settings.</p>
+<p>Disable Secure Boot if the kernel and bootloader you built are not appropriately signed, and configure the boot order. You should typically see a boot entry corresponding to the USB storage if its EFI System Partition (ESP) has been set up correctly. Make the USB storage the first boot medium, save the configuration, and exit.</p>
+<p>The firmware should now discover the UEFI bootloader on the ESP and launch GRUB.</p>
 <h2 id="transitioning-from-initramfs-to-rootfs">Transitioning from initramfs to rootfs</h2>
+<p>You should see the GRUB menu appear. Select <code>Debug Linux</code>.</p>
+<p>The Linux kernel should start, load the initial RAM disk, execute its <code>init</code> process, and eventually present a shell on the console.</p>
+<p>At this point, the kernel may not yet have access to the partition containing the rootfs. You need to load the required kernel modules using <code>modprobe</code> so that the kernel can discover the USB storage device and its partitions.</p>
+<p>Once <code>/dev/sdb2</code> (or the corresponding device on your machine) becomes available, mount the rootfs and transition from the initramfs environment to the real root filesystem. The <code>init</code> process from the rootfs can then take over the next stage of system initialization.</p>
 <h2 id="bring-up-complete">Bring-Up Complete</h2>
 <h2 id="what-next">What Next?</h2>
 
