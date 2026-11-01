@@ -69,6 +69,8 @@ In other words, we are interested primarily in **composition rather than manufac
 
 A Linux distribution is a reproducible way of composing, configuring, and managing system software components to create a functioning Linux-based operating system. It defines how these components are packaged, integrated, configured, updated, secured, and maintained throughout the lifecycle of the system.
 
+The above might look like fancy words, but in common tongue, it simply means assembling the software components of the operating system and managing its operations.
+
 **Note:** For the purposes of this exercise, we are going to leave out the reproducibility aspect.
 
 ## Requirements
@@ -233,7 +235,7 @@ replaced independently.
 
 Create a workspace directory and switch into it:
 
-```bash
+```bash {linenos=table}
 mkdir ~/workspace
 cd ~/workspace
 ```
@@ -260,10 +262,59 @@ the number of unknown variables while we build our system. Starting from a
 kernel source and configuration close to the one already running on the
 machine allows us to change one thing at a time.
 
+```bash {linenos=table}
+cd ~/workspace
+
+# Create a directory for the kernel source and build output.
+mkdir kernel-src
+cd kernel-src
+
+# Enable source repositories and download the Ubuntu kernel source.
+sudo add-apt-repository deb-src
+apt source linux-image-unsigned-$(uname -r)
+
+# Create a separate directory for the out-of-tree kernel build.
+mkdir kbuild
+
+# Use the latest available kernel configuration from /boot.
+# `uname -r` shows the currently running kernel version.
+# In this example, 6.8.0-146-generic is the latest available configuration.
+cp /boot/config-6.8.0-146-generic kbuild/.config
+
+# Move into the kernel source tree.
+# The exact directory name may vary depending on the downloaded version.
+cd linux-6.8.0
+
+# Configure the kernel to place all build artifacts in kbuild.
+export KBUILD_OUTPUT=~/workspace/kernel-src/kbuild
+
+# Update the existing configuration for the downloaded kernel source.
+make oldconfig
+
+# Open the interactive kernel configuration menu.
+make menuconfig
+```
+
+Enable the following:
+
+- `CONFIG_IKCONFIG`
+- `CONFIG_IKCONFIG_PROC`
+
+Disable the following:
+
+- `CONFIG_MODULE_SIG`
+- `CONFIG_MODULE_SIG_ALL`
+- `CONFIG_SECURITY_LOCKDOWN_LSM`
+
+Now build the kernel:
+
+```bash {linenos=table}
+make -j$(nproc) all
+```
 
 ## Creating the Composition of the initramfs
 
-```bash
+```bash {linenos=table}
 cd ~/workspace
 mkdir initramfs
 sudo debootstrap --arch=amd64 --variant=minbase noble initramfs http://archive.ubuntu.com/ubuntu
@@ -293,16 +344,16 @@ required for its intended purpose.
 In other words, an existing distribution provides the environment from which we can bootstrap a
 new and customized instance of a distribution.
 
-Now that we have a base filesystem, how do we go about customizing our newborn distribution?
+Now that we have a base filesystem, how do we go about customizing our newborn distribution initramfs?
  
-Recollect that we are building this distribution for the same hardware architecture as the
+Recollect that we are building this distribution for the same hardware architecture(x86-64) as the
 distribution we are currently running. This gives us an interesting opportunity: we can actually
 run programs from the new filesystem while continuing to use our existing system.
  
 Every process has a view of what it considers to be its root directory (`/`). You can see the root
 directory of your current shell through `/proc`:
  
-```bash
+```bash {linenos=table}
 ls -l /proc/self/root
 ```
  
@@ -324,7 +375,7 @@ For example, if our newly created filesystem is located at:
  
 we can enter it with:
  
-```bash
+```bash {linenos=table}
 sudo chroot ~/workspace/initramfs /bin/bash
 ```
  
@@ -400,7 +451,7 @@ we created. This removes the views of the host's `/dev`, `/sys`, and `/proc` fil
 new root filesystem, returning it to a self-contained filesystem hierarchy ready for the next
 stage of our build process.
 
-```bash
+```bash {linenos=table}
 # Make important kernel interfaces available inside the new root
 sudo mount --bind /dev  initramfs/dev
 sudo mount --bind /sys  initramfs/sys
@@ -426,7 +477,7 @@ itself. This is particularly useful when building a minimal system, as build-tim
 need to become part of the final filesystem, thereby conserving disk space and keeping the
 resulting system small.
 
-```bash
+```bash {linenos=table}
 # Within the host shell, outside the initramfs chroot
 cd ~/workspace
 
@@ -469,6 +520,15 @@ mount -t mqueue mqueue /dev/mqueue
 # Create shared-memory storage
 mkdir -p /dev/shm
 mount -t tmpfs tmpfs /dev/shm
+
+# Load kernel modules required to discover and access common storage devices
+modprobe xhci_pci \
+     usb_storage \
+     uas \
+     sd_mod \
+     ahci \
+     nvme
+
 __EOF__
 
 chmod +x setup.sh
@@ -478,8 +538,8 @@ chmod +x setup.sh
 You have now created your own `init` process. It sets up the minimal userspace environment required
 for the initial RAM disk and then launches a shell.
 
-The `exec /bin/sh` directive is particularly important. It does not create another process.
-Instead, `exec` replaces the program currently running as the `init` process with `/bin/sh` while
+The `exec /bin/bash` directive is particularly important. It does not create another process.
+Instead, `exec` replaces the program currently running as the `init` process with `/bin/bash` while
 retaining the same process ID. Since `/init` was started by the kernel as PID 1, the resulting
 shell continues running as PID 1.
 
@@ -490,22 +550,26 @@ Now we install the kernel modules and the vDSO into the initial RAM filesystem f
 machine. Please refer to the section
 [Configuring and Building the Linux Kernel](#configuring-and-building-the-linux-kernel).
 
-```bash
+```bash {linenos=table}
 # Within the host shell, outside the initramfs chroot
 cd ~/workspace/kernel-src
 
 sudo su
 
-export KBUILD_OUTPUT=TODO
+# Replace user with your username before sudo.
+# Replace linux-6.8.0 with the kernel version that got apt sourced.
+export KBUILD_OUTPUT=/home/user/workspace/kernel-src/linux-6.8.0
 
-# Install kernel modules into the initramfs
+# Install kernel modules into the initramfs,
+# replace user with your username before sudo
 make INSTALL_MOD_STRIP=1 \
-     INSTALL_MOD_PATH=/.../initramfs \
+     INSTALL_MOD_PATH=/home/user/workspace/initramfs \
      modules_install
 
-# Install the vDSO into the initramfs
+# Install the vDSO into the initramfs,
+# replace user with your username before sudo
 make INSTALL_MOD_STRIP=1 \
-     INSTALL_MOD_PATH=/.../initramfs \
+     INSTALL_MOD_PATH=/home/user/workspace/initramfs \
      vdso_install
 ```
 
@@ -523,7 +587,7 @@ The initial RAM disk is a `cpio` archive. We need to take the directory tree und
 
 Before creating the archive, we need to unmount `/dev`, `/sys`, and `/proc` from the initramfs directory tree. We do not want the host's `/dev`, `/sys`, and `/proc` to become part of the archive. These mount points will later be populated with the appropriate filesystems by `setup.sh`, which is run by `init` from within the initial RAM disk.
 
-```bash
+```bash {linenos=table}
 sudo umount ~/workspace/initramfs/dev
 sudo umount ~/workspace/initramfs/sys
 sudo umount ~/workspace/initramfs/proc
@@ -549,7 +613,7 @@ host which is mostly the case other than toy distros like the one here.
 
 ## Creating the Composition of the rootfs
 
-```bash
+```bash {linenos=table}
 cd ~/workspace
 mkdir rootfs
 
@@ -626,12 +690,17 @@ make INSTALL_PATH=/absolute/path/to/workspace/rootfs/boot \
 
 cd ~/workspace
 
+# Unmount the kernel interfaces bind-mounted into the rootfs
+# We do not want the host's /dev, /sys, and /proc contents included in the rootfs image
+sudo umount ~/workspace/rootfs/dev
+sudo umount ~/workspace/rootfs/sys
+sudo umount ~/workspace/rootfs/proc
+
 # Create a 4 GiB image file
-truncate -s 4G rootfs.ext4
+truncate -s 4G rootfs.img
 
 # Create an ext4 filesystem and populate it with the contents of rootfs/
-sudo mkfs.ext4 -F -d rootfs rootfs.ext4
-
+sudo mkfs.ext4 -F -d rootfs rootfs.img
 ```
 
 The rootfs is similar in composition to the initial RAM disk. However, observe that the rootfs itself contains the compressed initial RAM disk image. This raises an interesting question: how can the initial RAM disk be accessed if it resides inside the rootfs, when the drivers required to access the USB storage containing the rootfs are themselves inside the initial RAM disk?
@@ -682,15 +751,171 @@ Do desktop systems not face the same problem? They do. The difference is primari
 
 Now that we have the contents of the rootfs, it is time to look at how to structure the USB storage.
 
-If you imagine USB storage as a linear array of persistent bytes that you can read from and write to, it is simply too large to manage in its raw form. You need a way to compartmentalize it. Each such compartment is called a partition, and it represents a range of bytes whose contents can be organized according to the structure and policies of a particular file system.
+If you imagine USB storage as a linear array of persistent bytes that you can read from and write to, it is simply too large and unstructured to manage conveniently in its raw form. We therefore need a way to compartmentalize the storage. Each such compartment is called a **partition**, and it represents a contiguous range of storage that can be used independently.
 
-We need to create two such partitions: an EFI System Partition (ESP) and a rootfs partition. The ESP is FAT32 based and rootfs
-is ext4 based.
+For our minimal Linux system, we need to create two partitions: an **EFI System Partition (ESP)** and a **rootfs partition**. The ESP will occupy 1 GiB, while the rootfs partition will occupy 8 GiB.
+
+We will use `fdisk` to create a GPT partition table and the two partitions. The filesystem images will later be written directly to these partitions using `dd`, so we do not need to create the filesystems manually.
+
+```bash {linenos=table}
+# On my machine, the USB stick is represented as /dev/sdb.
+# Find the correct USB storage device before continuing.
+# WARNING: Selecting the wrong device can destroy data on the host machine.
+sudo fdisk /dev/sdb
+
+# Create a new GPT partition table
+g
+
+# Create partition 1
+n
+
+# Partition number: 1
+1
+
+# First sector: use default
+<Press Enter>
+
+# Partition size: 1 GiB
++1G
+
+# Change partition type
+t
+
+# Select partition 1
+1
+
+# Type 1 = EFI System
+1
+
+# Enter expert mode
+x
+
+# Change GPT partition name
+n
+
+# Select partition 1
+1
+
+# Set GPT partition name
+ESP
+
+# Return to main menu
+r
+
+# Create partition 2
+n
+
+# Partition number: 2
+2
+
+# First sector: use default
+<Press Enter>
+
+# Partition size: 8 GiB
++8G
+
+# Enter expert mode
+x
+
+# Change GPT partition name
+n
+
+# Select partition 2
+2
+
+# Set GPT partition name
+ROOTFS
+
+# Return to main menu
+r
+
+# Print the resulting partition table
+p
+
+# Write the partition table to disk and exit
+w
+```
+
+At this point, `/dev/sdb` contains two partitions:
+
+```text
+/dev/sdb
+├── /dev/sdb1    1 GiB    ESP
+└── /dev/sdb2    8 GiB    ROOTFS
+```
+
+We need to format `/dev/sdb1` (in my case; use the appropriate device in your case)
+with a filesystem that the UEFI system can understand: FAT32. UEFI looks for UEFI
+applications within FAT32 filesystems. In our case, the UEFI application is GRUB.
+
+```bash {linenos=table}
+sudo apt install dosfstools
+
+# Format the first partition as FAT32 for use as the EFI System Partition (ESP)
+sudo mkfs.fat -F 32 /dev/sdb1
+```
 
 ## Installing GRUB
 
-```bash
-sudo grub-install --target=x86_64-efi --efi-directory=... --boot-directory=... --removable --no-nvram --recheck
+```bash {linenos=table}
+cd ~/workspace
+mkdir -p mnt/efi
+
+# Mount the EFI System Partition to install the GRUB bootloader
+sudo mount /dev/sdb1 ~/workspace/mnt/efi
+
+# Replace 'user' in the paths below with your actual username
+sudo grub-install \
+    --target=x86_64-efi \
+    --efi-directory=/home/user/workspace/mnt/efi \
+    --boot-directory=/home/user/workspace/mnt/efi/boot \
+    --removable \
+    --no-nvram \
+    --recheck
+```
+
+Now we need to add a GRUB configuration file that indicates where to load the
+ramdisk and kernel from. This brings us to an important question: what aspects of
+the storage metadata can GRUB use as a hook to locate the required binaries?
+
+It turns out that each filesystem has its own UUID. Since our kernel and
+initramfs reside inside the rootfs, we use its UUID. GRUB uses the rootfs UUID
+as a storage metadata hook to locate the correct partition and load the binaries
+from it, even when multiple storage devices are available at boot time.
+
+```bash {linenos=table}
+# Get the UUID of the root filesystem
+file ~/workspace/rootfs.img
+
+# Move to the GRUB directory on the EFI System Partition
+cd ~/workspace/mnt/efi/EFI/BOOT
+
+# Replace e51fbd54-4235-4c5f-b657-274fa48666f9 below
+# with the UUID of your root filesystem
+cat > grub.cfg <<'__EOF__'
+set default=0
+set timeout=5
+set pager=1
+
+menuentry "Debug Linux" {
+        set pager=1
+        set debug=all
+
+        insmod part_gpt
+        insmod ext2
+        insmod search_fs_uuid
+
+        search --no-floppy --fs-uuid --set=root e51fbd54-4235-4c5f-b657-274fa48666f9
+
+        echo "GRUB says root is: $root"
+        ls ($root)/boot
+
+        linux ($root)/boot/vmlinuz-6.8.0-146-generic \
+              root=UUID=e51fbd54-4235-4c5f-b657-274fa48666f9 rw rootwait quiet
+
+        initrd ($root)/boot/initramfs-x86-64.cpio.gz
+}
+__EOF__
 ```
 
 ## Flashing the Software Image
@@ -699,7 +924,7 @@ Now that we have organized the storage on the USB drive, we need to transfer the
 
 On my machine, this partition is `/dev/sdb2`. Discover the corresponding partition on your machine by exploring `/dev` or, preferably, using `lsblk`.
 
-```bash
+```bash {linenos=table}
 lsblk
 
 sudo dd if=rootfs.img of=/dev/sdb2 status=progress conv=fsync
@@ -721,10 +946,31 @@ You should see the GRUB menu appear. Select `Debug Linux`.
 
 The Linux kernel should start, load the initial RAM disk, execute its `init` process, and eventually present a shell on the console.
 
-At this point, the kernel may not yet have access to the partition containing the rootfs. You need to load the required kernel modules using `modprobe` so that the kernel can discover the USB storage device and its partitions.
+At this point, the kernel may not yet have access to the partition containing the rootfs. You need to load the required kernel modules using `modprobe` so that the kernel can discover the USB storage device and its partitions. This is done in the `setup.sh` script invoked by `init` in the
+initramfs. 
 
 Once `/dev/sdb2` (or the corresponding device on your machine) becomes available, mount the rootfs and transition from the initramfs environment to the real root filesystem. The `init` process from the rootfs can then take over the next stage of system initialization.
 
 ## Bring-Up Complete
 
+At this point, you have a baseline runtime environment available. In a typical
+SoC bring-up, this is accompanied by the validation of other verticals such as
+audio, video, GPU, communications (modem, Wi-Fi, Bluetooth, and Ethernet), USB,
+and so on. You can try installing the required system components for each of
+these verticals into the rootfs and launching them.
+
+The majority of the time during bring-up is spent polishing existing software
+to make it run correctly on the hardware.
+
 ## What Next?
+
+If you have reached this far, you now have a baseline understanding of the
+major system components. From here, you can try:
+
+* Writing your own kernel module.
+* Introducing a new kernel interface to explore the kernel's runtime state.
+* Writing your own "Hello, World!" kernel using the Multiboot2 GRUB-to-kernel handoff protocol.
+* Creating a read-only rootfs and ramfs. What more is needed? Hint: additional data partitions, bind mounts, and overlay filesystems for paths that need to be writable and for persistent user data.
+* Installing other components into the rootfs for logging, audio, video, and GPU support, and then trying to validate and launch them. Each vertical typically has a reference application that can be used for validation.
+
+Honestly, the list is endless.

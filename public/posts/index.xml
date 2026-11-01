@@ -2,24 +2,38 @@
 <rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
   <channel>
     <title>Posts on Keerthivasan Raghavan</title>
-    <link>https://beyondabstractions.github.io/posts/</link>
+    <link>http://localhost:1313/posts/</link>
     <description>Recent content in Posts on Keerthivasan Raghavan</description>
     <generator>Hugo</generator>
     <language>en-us</language>
-    <lastBuildDate>Wed, 10 Dec 2025 00:00:00 +0000</lastBuildDate>
-    <atom:link href="https://beyondabstractions.github.io/posts/index.xml" rel="self" type="application/rss+xml" />
+    <lastBuildDate>Sat, 17 Oct 2026 00:00:00 +0000</lastBuildDate>
+    <atom:link href="http://localhost:1313/posts/index.xml" rel="self" type="application/rss+xml" />
+    <item>
+      <title>WIP: Minimal Distro</title>
+      <link>http://localhost:1313/posts/minimal-distro/</link>
+      <pubDate>Sat, 17 Oct 2026 05:18:10 +0000</pubDate>
+      <guid>http://localhost:1313/posts/minimal-distro/</guid>
+      <description>&lt;h1 id=&#34;wip-assembling-a-minimal-distro&#34;&gt;WIP: Assembling a Minimal Distro&lt;/h1&gt;&#xA;&lt;h2 id=&#34;table-of-contents&#34;&gt;Table of Contents&lt;/h2&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#the-why&#34;&gt;The Why?&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#what-is-a-linux-distribution&#34;&gt;What is a Linux Distribution?&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#requirements&#34;&gt;Requirements&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#why-actual-hardware&#34;&gt;Why Actual Hardware?&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#understanding-the-boot-process&#34;&gt;Understanding the Boot Process&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#set-up-the-workspace&#34;&gt;Set Up the Workspace&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#configuring-and-building-the-linux-kernel&#34;&gt;Configuring and Building the Linux Kernel&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#creating-the-composition-of-the-initramfs&#34;&gt;Creating the Composition of the initramfs&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#creating-the-composition-of-the-rootfs&#34;&gt;Creating the Composition of the rootfs&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#storage-layout-on-the-usb-drive&#34;&gt;Storage Layout on the USB Drive&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#installing-grub&#34;&gt;Installing GRUB&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#flashing-the-software-image&#34;&gt;Flashing the Software Image&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#booting-the-hardware-with-the-new-distro&#34;&gt;Booting the Hardware with the New &amp;ldquo;Distro&amp;rdquo;&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#transitioning-from-initramfs-to-rootfs&#34;&gt;Transitioning from initramfs to rootfs&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#bring-up-complete&#34;&gt;Bring-Up Complete&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;#what-next&#34;&gt;What Next?&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;&#xA;&lt;h2 id=&#34;the-why&#34;&gt;The Why?&lt;/h2&gt;&#xA;&lt;p&gt;There are many classes of computing devices, ranging from small handheld mobile devices to servers, that are said to run &amp;ldquo;Linux.&amp;rdquo; However, the phrase &amp;ldquo;It runs Linux&amp;rdquo; is often used without clearly defining what it means. Does it mean that the device runs just the Linux kernel, or does it mean something more, such as a Linux distribution (whatever that means)?&lt;/p&gt;</description>
+    </item>
     <item>
       <title>Hugo Cheat Sheet</title>
-      <link>https://beyondabstractions.github.io/posts/hugo-cheat-sheet/</link>
+      <link>http://localhost:1313/posts/hugo-cheat-sheet/</link>
       <pubDate>Wed, 10 Dec 2025 15:28:57 +0000</pubDate>
-      <guid>https://beyondabstractions.github.io/posts/hugo-cheat-sheet/</guid>
+      <guid>http://localhost:1313/posts/hugo-cheat-sheet/</guid>
       <description>&lt;h1 id=&#34;hugo-cheat-sheet&#34;&gt;Hugo Cheat Sheet&lt;/h1&gt;&#xA;&lt;table&gt;&#xA;  &lt;thead&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;th&gt;Command&lt;/th&gt;&#xA;          &lt;th&gt;Purpose&lt;/th&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/thead&gt;&#xA;  &lt;tbody&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;code&gt;hugo new posts/&amp;lt;post name&amp;gt;.md&lt;/code&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Create a new post.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;code&gt;hugo serve -D&lt;/code&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Start development server to serve content locally.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;      &lt;tr&gt;&#xA;          &lt;td&gt;&lt;code&gt;hugo build&lt;/code&gt;&lt;/td&gt;&#xA;          &lt;td&gt;Build the site.&lt;/td&gt;&#xA;      &lt;/tr&gt;&#xA;  &lt;/tbody&gt;&#xA;&lt;/table&gt;&#xA;&lt;h1 id=&#34;documentation-links&#34;&gt;Documentation Links&lt;/h1&gt;&#xA;&lt;ul&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://gohugo.io/documentation/&#34;&gt;Hugo Documentation&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://themes.gohugo.io/&#34;&gt;Hugo Themes&lt;/a&gt;&lt;/li&gt;&#xA;&lt;li&gt;&lt;a href=&#34;https://gokarna-hugo.netlify.app/posts/&#34;&gt;Gokarna Theme&lt;/a&gt;&lt;/li&gt;&#xA;&lt;/ul&gt;</description>
     </item>
     <item>
+      <title>WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS</title>
+      <link>http://localhost:1313/posts/devops-behind-hosting-an-https-endpoint-in-aws/</link>
+      <pubDate>Thu, 20 Nov 2025 15:34:55 +0000</pubDate>
+      <guid>http://localhost:1313/posts/devops-behind-hosting-an-https-endpoint-in-aws/</guid>
+      <description>&lt;h1 id=&#34;wip-devops-behind-hosting-an-https-endpoint-in-aws&#34;&gt;WIP: DevOps Behind Hosting an HTTP(S) Endpoint in AWS&lt;/h1&gt;&#xA;&lt;h2 id=&#34;the-why&#34;&gt;The why?&lt;/h2&gt;</description>
+    </item>
+    <item>
       <title>Hello World</title>
-      <link>https://beyondabstractions.github.io/posts/hello-world/</link>
+      <link>http://localhost:1313/posts/hello-world/</link>
       <pubDate>Mon, 10 Nov 2025 11:18:28 +0000</pubDate>
-      <guid>https://beyondabstractions.github.io/posts/hello-world/</guid>
+      <guid>http://localhost:1313/posts/hello-world/</guid>
       <description>&lt;h1 id=&#34;hello-world&#34;&gt;Hello World!&lt;/h1&gt;&#xA;&lt;p&gt;This is my blog.&lt;/p&gt;</description>
     </item>
   </channel>
