@@ -7,7 +7,7 @@ showTableOfContents: false
 tags: ["Silicon Bringup", "Validation", "System Software Integration"]
 title: "WIP: Minimal Distro"
 type: "post"
-draft: true
+draft: false
 ---
 
 # WIP: Assembling a Minimal Distro
@@ -533,6 +533,11 @@ __EOF__
 
 chmod +x setup.sh
 
+cat > init-switch-root.sh <<'__EOF__'
+
+__EOF__
+
+
 ```
 
 You have now created your own `init` process. It sets up the minimal userspace environment required
@@ -554,11 +559,14 @@ machine. Please refer to the section
 # Within the host shell, outside the initramfs chroot
 cd ~/workspace/kernel-src
 
+# Move into the kernel source tree.
+# The exact directory name may vary depending on the downloaded version.
+cd linux-6.8.0
+
 sudo su
 
-# Replace user with your username before sudo.
-# Replace linux-6.8.0 with the kernel version that got apt sourced.
-export KBUILD_OUTPUT=/home/user/workspace/kernel-src/linux-6.8.0
+# Configure the kernel to place all build artifacts in kbuild.
+export KBUILD_OUTPUT=~/workspace/kernel-src/kbuild
 
 # Install kernel modules into the initramfs,
 # replace user with your username before sudo
@@ -652,27 +660,21 @@ cat > init <<'__EOF__'
 export PS1='\u@rootfs-\h:\w\$ '
 
 cd /
-./setup.sh
 
 exec /bin/bash
 __EOF__
 
 chmod +x init
 
-# Create the rootfs setup script
-cat > setup.sh <<'__EOF__'
-#!/bin/bash
-
-# TODO: Add the required mount operations here.
-
-__EOF__
-
-chmod +x setup.sh
-
 # Move from ~/workspace/rootfs to ~/workspace/kernel-src
 cd ../kernel-src
 
-export KBUILD_OUTPUT=TODO
+# Move into the kernel source tree.
+# The exact directory name may vary depending on the downloaded version.
+cd linux-6.8.0
+
+# Configure the kernel to place all build artifacts in kbuild.
+export KBUILD_OUTPUT=~/workspace/kernel-src/kbuild
 
 # Install the kernel modules into the rootfs
 make INSTALL_MOD_STRIP=1 \
@@ -888,32 +890,27 @@ from it, even when multiple storage devices are available at boot time.
 file ~/workspace/rootfs.img
 
 # Move to the GRUB directory on the EFI System Partition
-cd ~/workspace/mnt/efi/EFI/BOOT
+cd ~/workspace/mnt/efi/boot/grub
 
-# Replace e51fbd54-4235-4c5f-b657-274fa48666f9 below
-# with the UUID of your root filesystem
+# Replace 3908f094-a5d6-4b76-a889-d642ef1b33f7 below
+# with the UUID of your root filesystem.
+# Replace the vmlinuz-6.8.12 with your kernel
+# binary that got installed in rootfs/boot.
 cat > grub.cfg <<'__EOF__'
 set default=0
 set timeout=5
 set pager=1
 
 menuentry "Debug Linux" {
-        set pager=1
-        set debug=all
-
-        insmod part_gpt
-        insmod ext2
-        insmod search_fs_uuid
-
-        search --no-floppy --fs-uuid --set=root e51fbd54-4235-4c5f-b657-274fa48666f9
+        search --no-floppy --fs-uuid --set=root 3908f094-a5d6-4b76-a889-d642ef1b33f7
 
         echo "GRUB says root is: $root"
         ls ($root)/boot
 
-        linux ($root)/boot/vmlinuz-6.8.0-146-generic \
-              root=UUID=e51fbd54-4235-4c5f-b657-274fa48666f9 rw rootwait quiet
+        linux ($root)/boot/vmlinuz-6.8.12 \
+              root=UUID=3908f094-a5d6-4b76-a889-d642ef1b33f7 rw rootwait quiet
 
-        initrd ($root)/boot/initramfs-x86-64.cpio.gz
+        initrd ($root)/boot/initramfs.cpio.gz
 }
 __EOF__
 ```
@@ -946,10 +943,9 @@ You should see the GRUB menu appear. Select `Debug Linux`.
 
 The Linux kernel should start, load the initial RAM disk, execute its `init` process, and eventually present a shell on the console.
 
-At this point, the kernel may not yet have access to the partition containing the rootfs. You need to load the required kernel modules using `modprobe` so that the kernel can discover the USB storage device and its partitions. This is done in the `setup.sh` script invoked by `init` in the
-initramfs. 
+At this point, the kernel may not yet have access to the partition containing the rootfs. You need to load the required kernel modules using `modprobe` so that the kernel can discover the USB storage device and its partitions. This is done in the `setup.sh` script invoked by `init` in the initramfs. 
 
-Once `/dev/sdb2` (or the corresponding device on your machine) becomes available, mount the rootfs and transition from the initramfs environment to the real root filesystem. The `init` process from the rootfs can then take over the next stage of system initialization.
+Run `exec ./init-switch-root.sh` script to mount the rootfs and switch into the rootfs.
 
 ## Bring-Up Complete
 
@@ -962,15 +958,16 @@ these verticals into the rootfs and launching them.
 The majority of the time during bring-up is spent polishing existing software
 to make it run correctly on the hardware.
 
-## What Next?
+## What's Next?
 
-If you have reached this far, you now have a baseline understanding of the
+If you have made it this far, you now have a baseline understanding of the
 major system components. From here, you can try:
 
 * Writing your own kernel module.
 * Introducing a new kernel interface to explore the kernel's runtime state.
 * Writing your own "Hello, World!" kernel using the Multiboot2 GRUB-to-kernel handoff protocol.
 * Creating a read-only rootfs and ramfs. What more is needed? Hint: additional data partitions, bind mounts, and overlay filesystems for paths that need to be writable and for persistent user data.
-* Installing other components into the rootfs for logging, audio, video, and GPU support, and then trying to validate and launch them. Each vertical typically has a reference application that can be used for validation.
+* Installing additional components into the rootfs for logging, audio, video, and GPU support, and then trying to validate and launch them. Each vertical typically has a reference application that can be used for validation.
+* Creating an installer to copy or duplicate your distro onto another storage medium.
 
 Honestly, the list is endless.
