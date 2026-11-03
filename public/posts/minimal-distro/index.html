@@ -1499,6 +1499,9 @@ applications within FAT32 filesystems. In our case, the UEFI application is GRUB
 </span></span></code></pre></td></tr></table>
 </div>
 </div><h2 id="installing-grub">Installing GRUB</h2>
+<p>GRUB is a UEFI application that can load the kernel and ramdisk from a filesystem.</p>
+<p>It has many features, one of which is the ability to provide both a CLI and a menu-driven selection interface for choosing the next phase of the boot process. This gives us the ability to have multiple kernels and ramdisks on the storage medium and select between them at boot.</p>
+<p>Why do this? It allows us to modify the kernel and test those changes at runtime without replacing the existing kernel and ramdisk. In a typical desktop Linux distribution, having multiple kernels allows us to switch between different kernel versions. If one fails to boot, we can select a previously known working kernel, often through a recovery or advanced boot option in the GRUB menu.</p>
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1
@@ -1533,13 +1536,9 @@ applications within FAT32 filesystems. In our case, the UEFI application is GRUB
 </span></span></span><span style="display:flex;"><span><span style="color:#ae81ff"></span>    --recheck
 </span></span></code></pre></td></tr></table>
 </div>
-</div><p>Now we need to add a GRUB configuration file that indicates where to load the
-ramdisk and kernel from. This brings us to an important question: what aspects of
-the storage metadata can GRUB use as a hook to locate the required binaries?</p>
-<p>It turns out that each filesystem has its own UUID. Since our kernel and
-initramfs reside inside the rootfs, we use its UUID. GRUB uses the rootfs UUID
-as a storage metadata hook to locate the correct partition and load the binaries
-from it, even when multiple storage devices are available at boot time.</p>
+</div><p>Now we need to add a GRUB configuration file that indicates where to load the kernel and ramdisk from. The contents of this file are used to populate the GRUB boot menu.</p>
+<p>This brings us to an important question: what aspects of the storage metadata can GRUB use as a hook to locate the required binaries?</p>
+<p>It turns out that each filesystem has its own UUID. Since our kernel and initramfs reside inside the root filesystem, we can use its UUID. GRUB uses the root filesystem&rsquo;s UUID as a storage metadata hook to locate the correct filesystem and load the binaries from it, even when multiple storage devices are available at boot time.</p>
 <div class="highlight"><div style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;">
 <table style="border-spacing:0;padding:0;margin:0;border:0;"><tr><td style="vertical-align:top;padding:0;margin:0;border:0;">
 <pre tabindex="0" style="color:#f8f8f2;background-color:#272822;-moz-tab-size:4;-o-tab-size:4;tab-size:4;"><code><span style="white-space:pre;-webkit-user-select:none;user-select:none;margin-right:0.4em;padding:0 0.4em 0 0.4em;color:#7f7f7f"> 1

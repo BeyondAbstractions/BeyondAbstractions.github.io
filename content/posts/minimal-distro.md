@@ -935,6 +935,12 @@ sudo mkfs.fat -F 32 /dev/sdb1
 
 ## Installing GRUB
 
+GRUB is a UEFI application that can load the kernel and ramdisk from a filesystem.
+
+It has many features, one of which is the ability to provide both a CLI and a menu-driven selection interface for choosing the next phase of the boot process. This gives us the ability to have multiple kernels and ramdisks on the storage medium and select between them at boot.
+
+Why do this? It allows us to modify the kernel and test those changes at runtime without replacing the existing kernel and ramdisk. In a typical desktop Linux distribution, having multiple kernels allows us to switch between different kernel versions. If one fails to boot, we can select a previously known working kernel, often through a recovery or advanced boot option in the GRUB menu.
+
 ```bash {linenos=table}
 cd ~/workspace
 mkdir -p mnt/efi
@@ -952,14 +958,11 @@ sudo grub-install \
     --recheck
 ```
 
-Now we need to add a GRUB configuration file that indicates where to load the
-ramdisk and kernel from. This brings us to an important question: what aspects of
-the storage metadata can GRUB use as a hook to locate the required binaries?
+Now we need to add a GRUB configuration file that indicates where to load the kernel and ramdisk from. The contents of this file are used to populate the GRUB boot menu.
 
-It turns out that each filesystem has its own UUID. Since our kernel and
-initramfs reside inside the rootfs, we use its UUID. GRUB uses the rootfs UUID
-as a storage metadata hook to locate the correct partition and load the binaries
-from it, even when multiple storage devices are available at boot time.
+This brings us to an important question: what aspects of the storage metadata can GRUB use as a hook to locate the required binaries?
+
+It turns out that each filesystem has its own UUID. Since our kernel and initramfs reside inside the root filesystem, we can use its UUID. GRUB uses the root filesystem's UUID as a storage metadata hook to locate the correct filesystem and load the binaries from it, even when multiple storage devices are available at boot time.
 
 ```bash {linenos=table}
 # Get the UUID of the root filesystem
