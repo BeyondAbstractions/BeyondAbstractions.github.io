@@ -614,8 +614,6 @@ echo "Switching root to $NEW_ROOT"
 # Discard the initramfs root and execute /init from the real root.
 exec switch_root "$NEW_ROOT" "$INIT"
 __EOF__
-
-
 ```
 
 You have now created your own `init` process. It sets up the minimal userspace environment required
