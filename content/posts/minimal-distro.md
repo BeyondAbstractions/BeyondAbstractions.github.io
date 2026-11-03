@@ -534,7 +534,85 @@ __EOF__
 chmod +x setup.sh
 
 cat > init-switch-root.sh <<'__EOF__'
+#!/bin/bash
 
+set -eu
+
+NEW_ROOT="/rootfs"
+INIT="/init"
+
+# Use the UUID supplied as the first argument.
+# If no argument is supplied, obtain it from:
+#
+#     root=UUID=<uuid>
+#
+# in the kernel command line.
+if [ "$#" -ge 1 ]; then
+    ROOT_UUID="$1"
+else
+    ROOT_UUID="$(
+        sed -n 's/.*root=UUID=\([^ ]*\).*/\1/p' /proc/cmdline
+    )"
+fi
+
+if [ -z "$ROOT_UUID" ]; then
+    echo "Error: root filesystem UUID was not specified." >&2
+    echo "Specify it as an argument or use root=UUID=<uuid> in /proc/cmdline." >&2
+    exit 1
+fi
+
+echo "Root filesystem UUID: $ROOT_UUID"
+
+# Resolve the UUID to its block device.
+ROOT_DEVICE="$(blkid -U "$ROOT_UUID" 2>/dev/null || true)"
+
+if [ -z "$ROOT_DEVICE" ]; then
+    echo "Error: no block device found for UUID=$ROOT_UUID" >&2
+    exit 1
+fi
+
+echo "Root filesystem device: $ROOT_DEVICE"
+
+# Create the new-root mount point.
+mkdir -p "$NEW_ROOT"
+
+# Mount the real root filesystem.
+if ! mount "$ROOT_DEVICE" "$NEW_ROOT"; then
+    echo "Error: failed to mount $ROOT_DEVICE at $NEW_ROOT" >&2
+    exit 1
+fi
+
+# The real root filesystem must provide /init.
+if [ ! -x "$NEW_ROOT$INIT" ]; then
+    echo "Error: $INIT is missing or not executable in $NEW_ROOT" >&2
+    umount "$NEW_ROOT"
+    exit 1
+fi
+
+# Create mount points in the real root filesystem.
+mkdir -p \
+    "$NEW_ROOT/proc" \
+    "$NEW_ROOT/sys" \
+    "$NEW_ROOT/dev" \
+    "$NEW_ROOT/run" \
+    "$NEW_ROOT/tmp"
+
+# Move the kernel interface filesystems from the initramfs
+# into the real root filesystem.
+#
+# Nested mounts such as /dev/pts, /dev/shm and /dev/mqueue
+# move together with /dev.
+for mount_point in /dev /proc /sys /run /tmp; do
+    if mountpoint -q "$mount_point"; then
+        echo "Moving $mount_point -> $NEW_ROOT$mount_point"
+        mount --move "$mount_point" "$NEW_ROOT$mount_point"
+    fi
+done
+
+echo "Switching root to $NEW_ROOT"
+
+# Discard the initramfs root and execute /init from the real root.
+exec switch_root "$NEW_ROOT" "$INIT"
 __EOF__
 
 
@@ -946,6 +1024,25 @@ The Linux kernel should start, load the initial RAM disk, execute its `init` pro
 At this point, the kernel may not yet have access to the partition containing the rootfs. You need to load the required kernel modules using `modprobe` so that the kernel can discover the USB storage device and its partitions. This is done in the `setup.sh` script invoked by `init` in the initramfs. 
 
 Run `exec ./init-switch-root.sh` script to mount the rootfs and switch into the rootfs.
+
+Reading through `init-switch-root.sh`, you will observe that mounts are moved from the initramfs into the rootfs.
+
+Why? Well, `procfs`, `sysfs`, and `devtmpfs` maintain their state within the kernel, so they can afford to be mounted again from scratch in the rootfs. However, other filesystems, such as message queues and `tmpfs`, lose their contents when mounted as new instances within the rootfs. A newly mounted `tmpfs`, for example, is not the same `tmpfs` instance that was used by the initramfs.
+
+Moving these mounts instead of recreating them gives the initramfs an opportunity to preserve and pass data to the rootfs during the transition.
+
+`init-switch-root.sh` discovers the block device to use based on the UUID supplied on the kernel command line, which is specified in `grub.cfg`. Using `blkid`, it resolves this UUID to the corresponding block device, ensuring that the correct partition on the correct storage device is selected and mounted as the rootfs.
+
+**Note:** If you want to avoid updating `grub.cfg` every time the rootfs image is recreated, you can use a predetermined UUID when generating the ext4 image from the rootfs directory:
+
+```bash
+ROOTFS_UUID="12345678-1234-1234-1234-123456789abc"
+
+truncate -s 4G rootfs.img
+mkfs.ext4 -U "$ROOTFS_UUID" -d rootfs/ rootfs.img
+```
+
+In production embedded Linux systems, each filesystem is typically assigned a predetermined UUID. This gives the software stack a stable identifier that it can rely on across multiple flash cycles, even when the filesystem images themselves are rebuilt and reflashed.
 
 ## Bring-Up Complete
 
