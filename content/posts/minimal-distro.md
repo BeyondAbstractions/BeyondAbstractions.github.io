@@ -5,12 +5,12 @@ description: ""
 lastmod: 2026-10-17
 showTableOfContents: false
 tags: ["Silicon Bringup", "Validation", "System Software Integration"]
-title: "WIP: Minimal Distro"
+title: "Minimal Distro"
 type: "post"
 draft: false
 ---
 
-# WIP: Assembling a Minimal Distro
+# Assembling a Minimal Distro
 
 ## Table of Contents
 
