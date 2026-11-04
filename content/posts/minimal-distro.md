@@ -716,6 +716,9 @@ sudo chroot rootfs /bin/bash
 # Install userspace utilities for managing kernel modules
 apt install kmod
 
+# Install firmware packages
+apt install linux-firmware
+
 # Exit the chroot and return to the host
 exit
 
